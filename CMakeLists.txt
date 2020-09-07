@@ -3,7 +3,7 @@ project(untitled)
 
 set(CMAKE_CXX_STANDARD 20)
 
-add_executable(untitled main.cpp mymath.h mymath.cpp intf.h)
+add_executable(untitled main.cpp mymath.h mymath.cpp intf.h UICalc.cpp UICalc.h)
 
 find_package(SFML 2.5 COMPONENTS graphics audio REQUIRED)
 

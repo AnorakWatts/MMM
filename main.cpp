@@ -1,4 +1,4 @@
-#include "intf.h"
+#include "mymath.h"
 using namespace  std;
 int main()
 {
