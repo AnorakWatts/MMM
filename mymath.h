@@ -1,6 +1,3 @@
-//
-// Created by valya on 03.09.2020.
-//
 #include <pthread.h>
 #include <utility>
 #include <cmath>

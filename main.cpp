@@ -1,18 +1,18 @@
-#include "mymath.h"
+#include "UICalc.h"
+#include <unistd.h>
 using namespace  std;
 int main()
 {
+    std::vector<thread>t;
+    mymath::plotter *ptr,*ptr1;
+    ptr1= new mymath::plotter(720, 480);
+    ptr= new mymath::plotter(720, 480);
+    ptr->setfun(&sin, -1, 1);
+    ptr1->setfun(&sin, -1, 1);
+    std::thread plot(&mymath::plotter::sleep, ptr);
+    std::thread plot1(&mymath::plotter::sleep, ptr1);
+    plot.detach();
+    plot1.detach();
+    sleep(10);
 
-    mymath::plotter p(720,480);
-    p.setfun(&mymath::mathfunctions::ln, 0, 10,0.001);
-   mymath::plotter p1(720,480);
-    p1.setfun(exp, -1, 1);
-    getchar();
-    for(double x=1;x<10;x+=0.1)
-    {
-        cout<<log(x)/log(6)<<"      "<<mymath::mathfunctions::lAb(x,6,0.0000001)<<endl;
-        if(fabs(log(x)-mymath::mathfunctions::ln(x,0.0000001))>0.1)
-            cout<<"HUY"<<endl;
-    }
-    return 0;
 }

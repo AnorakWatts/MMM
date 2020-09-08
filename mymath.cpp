@@ -77,9 +77,9 @@ long double mymath::mathfunctions::lAb(long double a, long double b, long double
 
 
 mymath::plotter::plotter(int WindowL, int WindowH) {
- WL=WindowL;
- WH=WindowH;
- window=new sf::RenderWindow(sf::VideoMode(WL, WH), "plot", sf::Style::Close);
+    WL=WindowL;
+    WH=WindowH;
+    window=new sf::RenderWindow(sf::VideoMode(WL, WH), "plot", sf::Style::Close);
 }
 
 void mymath::plotter::setfun(long double (*fun)(long double, long double),int x0, int x1,long double eps) {
@@ -132,15 +132,13 @@ void mymath::plotter::sleep() {
         while (window->pollEvent(event)) {
             if (event.type == sf::Event::Closed) {
                 window->close();
-                delete (window);
+                this->~plotter();
+                return;
             }
         }
-        window->setFramerateLimit(5);
-        window->setFramerateLimit(60);
     }
 }
 mymath::plotter::~plotter() {
     delete (window);
 }
-
 

@@ -1,14 +1,15 @@
-//
-// Created by anorak on 07.09.2020.
-//
+#include "SFML/Graphics.hpp"
+#include <thread>
+#include "mymath.h"
+class buttonSF: public sf::Drawable
+{
 
-#ifndef UNTITLED_UICALC_H
-#define UNTITLED_UICALC_H
-
-
+};
 class UICalc {
-
+public:
+    void MMM();
+private:
 };
 
 
-#endif //UNTITLED_UICALC_H
+
