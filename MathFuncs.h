@@ -9,16 +9,6 @@ typedef long double (*syst)(long double x);
 //
 namespace AnoraksMath
 {
-    class funcsforslojno
-    {
-    private:
-        enum tp{apr,sys,cons};
-        tp t;
-        aprc ap;
-        syst st;
-        double c;
-        friend MathFuncs;
-    };
     class MathFuncs
     {
     public:
@@ -28,6 +18,6 @@ namespace AnoraksMath
         static long double exp(long double x, long double eps);
         static long double lg(long double x, long double eps);
         static long double lAb(long double a, long double b, long double eps);
-        static long double slojno(long double x, long double eps,string st);
+        static long double lagrange(vector<long double>fv,vector<long double>xv,long double x);
     };
 }

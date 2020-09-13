@@ -8,7 +8,7 @@ int main()
     sf::ContextSettings g;  g.antialiasingLevel=8;
     sf::RenderWindow window(sf::VideoMode(1280, 720), "SFML works!",sf::Style::Default,g);
     Plotter pt2(300, 300, 10, 10);
-    pt2.addfun(&MathFuncs::slojno, -1, 1,0.0001);
+    pt2.addfun(&MathFuncs::sin, -1, 1,0.0001);
     while (window.isOpen())
     {
         sf::Event event;

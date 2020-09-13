@@ -42,7 +42,7 @@ long double AnoraksMath::MathFuncs::ln(long double x, long double eps) {
     bool uper1 = 0;
     if (x < 0)
     {
-        return NULL;
+        return 0;
     }
     if (x == 1)
         return 0;
@@ -74,43 +74,16 @@ long double AnoraksMath::MathFuncs::lAb(long double a, long double b, long doubl
     return ln(a, eps) / ln(b, eps);
 }
 
-long double AnoraksMath::MathFuncs::slojno(long double x, long double eps,string st)
-{
-    long double y,yy;
-    y = yy = 1;
-    for (int i = 0; i < st.size(); i++)
+long double AnoraksMath::MathFuncs::lagrange(vector<long double> fv, vector<long double> xv, long double x) {
+    long double res;
+    long int len;
+    if(fv.size()<xv.size())
     {
-        if ('0' <= st[i] <= '9')
-        {
-            if (st[i] == '0')
-            {
-                if (st[i + 1] == '*')
-                {
-                    while (st[i] != '+')
-                    {
-                        i++;
-                    }
-                }
-            }
-            yy = st[i];
-            while ('0' <= st[i] <= '9')
-            {
-                yy = yy * 10 + st[i];
-                i++;
-            }
-            if (st[i] == '*')
-            {
-                y = yy;
-                yy = 1;
-                i++;
-                if ('0' <= st[i] <= '9')
-
-            }
-            else if (st[i] == '+')
-            {
-
-            }
-        }
+        len=fv.size();
     }
-    return y;
+    else if(fv.size()<xv.size())
+    {
+        len=fv.size();
+    }
+
 }

@@ -15,8 +15,8 @@ AnoraksMath::Plotter::Plotter(int PlotL, int PlotH, int startY, int startX)
 }
 
 void AnoraksMath::Plotter::addfun(long double (*fun)(long double, long double), int x0, int x1, long double eps) {
-    long double xlen = fabs(x1 - x0), y0, y1, y;
-    y1 = y0 = fun(x0 + ((xlen / PL) * 1), eps);
+    long double xlen = abs(x1 - x0), y0, y1, y;
+    y1 = y0 = fun(x0 + (xlen / PL), eps);
     sf::VertexArray curve(sf::LinesStrip, PL);
     for (int i = 0; i < PL; i++)
     {
@@ -41,7 +41,7 @@ void AnoraksMath::Plotter::addfun(long double (*fun)(long double, long double), 
 }
 
 void AnoraksMath::Plotter::addfun(double (*fun)(double), int x0, int x1) {
-    long double xlen = fabs(x1 - x0), y0, y1, y;
+    long double xlen = abs(x1 - x0), y0, y1, y;
     y1 = y0 = fun(x0 + ((xlen / PL) * 1));
     sf::VertexArray curve(sf::LinesStrip, PL);
     for (int i = 0; i < PL; i++)
