@@ -19,5 +19,6 @@ namespace AnoraksMath
         static long double lg(long double x, long double eps);
         static long double lAb(long double a, long double b, long double eps);
         static long double lagrange(vector<long double>fv,vector<long double>xv,long double x);
+        static long double NEW_Ton();
     };
 }

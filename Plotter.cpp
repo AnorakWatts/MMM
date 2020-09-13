@@ -104,3 +104,9 @@ void AnoraksMath::Plotter::draw(sf::RenderTarget& target, sf::RenderStates state
     for (int i = 0; i < curves.size(); i++)
         target.draw(curves[i]);
 }
+
+void AnoraksMath::Plotter::adfun(long double (*fun)(vector<long double>, vector<long double>, long double),
+                                 vector<long double> xv, vector<long double> fv, long double)
+{
+
+}

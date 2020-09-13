@@ -75,15 +75,29 @@ long double AnoraksMath::MathFuncs::lAb(long double a, long double b, long doubl
 }
 
 long double AnoraksMath::MathFuncs::lagrange(vector<long double> fv, vector<long double> xv, long double x) {
-    long double res;
+    long double res,ch,zn;
     long int len;
     if(fv.size()<xv.size())
     {
         len=fv.size();
     }
-    else if(fv.size()<xv.size())
+    else
     {
         len=fv.size();
     }
-
+    for(int i=0; i<len;i++)
+    {
+        ch=1;zn=1;
+        for(int j=0;j<len;j++)
+        {
+            if(i!=j)
+            {
+                ch*=(x-xv[j]);
+                zn*=(xv[i]-xv[j]);
+            }
+        }
+        ch*=fv[i];
+        res+=ch/zn;
+    }
+    return res;
 }

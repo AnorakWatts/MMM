@@ -11,6 +11,7 @@ namespace AnoraksMath
 		Plotter(int WindowL, int WindowH, int startY, int startX);
 		void addfun(long double (*fun)(long double, long double), int x0, int x1, long double eps);
 		void addfun(double (*fun)(double), int x0, int x1);
+		void adfun(long double(*fun)(vector<long double>,vector<long double>,long double),vector<long double>xv,vector<long double>fv,long double);
 		void clear();
 		void setColors(vector<sf::Color>curvecolors,sf::Color bgc);
 		~Plotter();
