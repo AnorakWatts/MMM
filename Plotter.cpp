@@ -1,5 +1,5 @@
 #include "Plotter.h"
-
+#include <iostream>
 AnoraksMath::Plotter::Plotter(int PlotL, int PlotH, int startY, int startX)
 {
 	PH = PlotH;
@@ -31,7 +31,7 @@ void AnoraksMath::Plotter::addfun(long double (*fun)(long double, long double), 
     for (int i = 0; i < PL; i++)
     {
 
-        curve[i] = sf::Vector2f(i+SX, (-(PH / ylen) * fun(x0 + ((xlen / PL) * i), eps) + (PH - y + y0) / 2)+SY);
+        curve[i] = sf::Vector2f(i+SX, -20*fun(x0 + ((xlen / PL) * i), eps) +SY+(PH/2));
         if (curve[i].position.y > SY + PH)
             curve[i].position.y = SY + PH;
         else if (curve[i].position.y < SY)
@@ -55,7 +55,34 @@ void AnoraksMath::Plotter::addfun(double (*fun)(double), int x0, int x1) {
     long double ylen = y1 - y0;
     for (int i = 0; i < PL; i++)
     {
-        curve[i] = sf::Vector2f(i+SX,( -(PH / ylen) * fun(x0 + ((xlen / PL) * i)) + (PH - y + y0) / 2)+SY);
+        curve[i] = sf::Vector2f(i+SX,-20*(fun(x0 + ((xlen / PL) * i)))+SY+(PH/2));
+        std::cout<<curve[i].position.y<<endl;
+        if (curve[i].position.y > SY + PH)
+            curve[i].position.y = SY + PH;
+        else if (curve[i].position.y < SY)
+            curve[i].position.y = SY;
+    }
+    curves.push_back(curve);
+}
+
+void AnoraksMath::Plotter::addfun(long double (*fun)(vector<long double>, vector<long double>, long double),
+                                 vector<long double> fv, vector<long double> xv, long double x0,long double x1)
+{
+    long double xlen = abs(x1 - x0), y0, y1, y;
+    y1 = y0 =  fun(fv,xv,(x0 + ((xlen / PL))));
+    sf::VertexArray curve(sf::LinesStrip, PL);
+    for (int i = 0; i < PL; i++)
+    {
+        y = fun(fv,xv,(x0 + ((xlen / PL) * i)));
+        if (y < y0)
+            y0 = y;
+        if (y > y1)
+            y1 = y;
+    }
+    long double ylen = y1 - y0;
+    for (int i = 0; i < PL; i++)
+    {
+        curve[i] = sf::Vector2f(i+SX,-20*(fun(fv,xv,(x0 + ((xlen / PL) * i)))) +SY+(PH / 2));
         if (curve[i].position.y > SY + PH)
             curve[i].position.y = SY + PH;
         else if (curve[i].position.y < SY)
@@ -103,10 +130,4 @@ void AnoraksMath::Plotter::draw(sf::RenderTarget& target, sf::RenderStates state
 
     for (int i = 0; i < curves.size(); i++)
         target.draw(curves[i]);
-}
-
-void AnoraksMath::Plotter::adfun(long double (*fun)(vector<long double>, vector<long double>, long double),
-                                 vector<long double> xv, vector<long double> fv, long double)
-{
-
 }

@@ -77,13 +77,14 @@ long double AnoraksMath::MathFuncs::lAb(long double a, long double b, long doubl
 long double AnoraksMath::MathFuncs::lagrange(vector<long double> fv, vector<long double> xv, long double x) {
     long double res,ch,zn;
     long int len;
+    res=0;
     if(fv.size()<xv.size())
     {
         len=fv.size();
     }
     else
     {
-        len=fv.size();
+        len=xv.size();
     }
     for(int i=0; i<len;i++)
     {

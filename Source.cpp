@@ -8,11 +8,23 @@ using namespace std;
 
 int main()
 {
-    /*sf::ContextSettings g;  g.antialiasingLevel=8;
-    sf::RenderWindow window(sf::VideoMode(1280, 720), "SFML works!",sf::Style::Default,g);
-    Plotter pt2(300, 300, 10, 10);
-    pt2.addfun(&tan, -1, 1);
-    //pt2.addfun(&cos, -1, 1);
+    vector<sf::Color>cl;
+    cl.push_back(Color::Red);
+    cl.push_back(Color::Blue);
+    cl.push_back(Color::Green);
+    sf::ContextSettings g;  g.antialiasingLevel=8;
+    sf::RenderWindow window(sf::VideoMode(1600, 900), "SFML works!",sf::Style::Default,g);
+    Plotter pt2(1600, 900, 0, 0);
+    vector<long double>x,y;
+    for(double i=0;i<100;i++)
+    {
+        x.push_back(i);
+        y.push_back(sin(i));
+        //y.push_back(sin(i));
+    }
+    pt2.addfun(&MathFuncs::lagrange,y,x,0,100);
+    pt2.addfun(sin, 0,100);
+    pt2.setColors(cl,Color::White);
     while (window.isOpen())
     {
         sf::Event event;
@@ -25,14 +37,5 @@ int main()
         window.draw(pt2);
         window.display();
     }
-
-    return 0;*/
-    vector<long double>x,y;
-    x.push_back(1);
-    x.push_back(2);
-    x.push_back(3);
-    x.push_back(4);
-    for(int i=0;i<x.size();i++)
-        y.push_back(pow(x[i],2));
-    cout<<MathFuncs::lagrange(y,x,2.5);
+    return 0;
 }
