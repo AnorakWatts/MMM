@@ -102,3 +102,52 @@ long double AnoraksMath::MathFuncs::lagrange(vector<long double> fv, vector<long
     }
     return res;
 }
+
+long double AnoraksMath::MathFuncs::newtone(vector<long double> arrX,vector<long double> arrY,long double x){
+    int N;
+    double res = arrY.at(0);
+    double current = 1;
+    if(arrX.size()>arrY.size())
+        N=arrX.size();
+    else
+        N=arrY.size();
+    vector<double> arrY0;
+    for(int j=0;j<N;j++){
+
+        for(int i=0;i<N-j-1;i++){
+            arrY.at(i) = (arrY.at(i+1)-arrY.at(i))/(arrX.at(i+j+1)-arrX.at(i));
+            if(i==0)
+                arrY0.push_back(arrY.at(i));
+        }
+
+    }
+    for (int i=0;i<N-1;i++){
+        current = current*(x-arrX.at(i));
+        res+=arrY0.at(i)*current;
+    }
+    return res;
+}
+
+long int AnoraksMath::MathFuncs::sum_0_to_N(long int N) {
+    long int res=0;
+    for(int i=1;i<N;i++)
+        res+=i;
+    return res;
+}
+
+
+long double AnoraksMath::MathFuncs::ldif(vector<double>yi,int i, double h) {
+    return (yi[i-1]-yi[i])/h;
+}
+
+long double AnoraksMath::MathFuncs::rdif(vector<double> yi, int i, double h) {
+    return (yi[i]-yi[i-1])/h;
+}
+
+long double AnoraksMath::MathFuncs::cdif(vector<double> yi, int i, double h) {
+    return (yi[i+1]-yi[i-1])/2*h;
+}
+
+//long double AnoraksMath::MathFuncs::ddif(vector<double> yi, int i, double h) {
+    //return ;
+

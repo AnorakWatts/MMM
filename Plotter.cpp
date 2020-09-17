@@ -56,7 +56,6 @@ void AnoraksMath::Plotter::addfun(double (*fun)(double), int x0, int x1) {
     for (int i = 0; i < PL; i++)
     {
         curve[i] = sf::Vector2f(i+SX,-20*(fun(x0 + ((xlen / PL) * i)))+SY+(PH/2));
-        std::cout<<curve[i].position.y<<endl;
         if (curve[i].position.y > SY + PH)
             curve[i].position.y = SY + PH;
         else if (curve[i].position.y < SY)
@@ -70,7 +69,7 @@ void AnoraksMath::Plotter::addfun(long double (*fun)(vector<long double>, vector
 {
     long double xlen = abs(x1 - x0), y0, y1, y;
     y1 = y0 =  fun(fv,xv,(x0 + ((xlen / PL))));
-    sf::VertexArray curve(sf::LinesStrip, PL);
+    sf::VertexArray curve(sf::LinesStrip,PL);
     for (int i = 0; i < PL; i++)
     {
         y = fun(fv,xv,(x0 + ((xlen / PL) * i)));
