@@ -1,132 +1,326 @@
+//
+// Created by anorak on 12.10.2020.
+//
+
 #include "Plotter.h"
-#include <iostream>
-AnoraksMath::Plotter::Plotter(int PlotL, int PlotH, int startY, int startX)
-{
-	PH = PlotH;
-	PL = PlotL;
-    bg->setPosition(startX, startY);
-    bg->setSize(Vector2f( PlotL, PlotH));
-    bg->setFillColor(Color::Black);
-    bg->setOutlineColor(Color::Red);
-    bg->setOutlineThickness(4);
-    SX = startX;
-    SY = startY;
 
+Plotter::Plotter(int x, int y, int sizex, int sizey) {
+    back.setSize(Vector2f(sizex,sizey));
+    this->sizeX=sizex;
+    this->sizeY=sizey;
+    this->XL=0;
+    this->YL=0;
+    this->SX=x;
+    this->SY=y;
+    minX=INT64_MAX;
+    minY=INT64_MAX;
+    MaxX=INT64_MIN;
+    MaxY=INT64_MIN;
+    back.setFillColor(Color::Black);
+    back.setSize(Vector2f(sizex,sizey));
+    back.setPosition(x,y);
+    back.setOutlineColor(Color::Red);
+    back.setOutlineThickness(2);
 }
 
-void AnoraksMath::Plotter::addfun(long double (*fun)(long double, long double), int x0, int x1, long double eps) {
-    long double xlen = abs(x1 - x0), y0, y1, y;
-    y1 = y0 = fun(x0 + (xlen / PL), eps);
-    sf::VertexArray curve(sf::LinesStrip, PL);
-    for (int i = 0; i < PL; i++)
-    {
-        y = fun(x0 + ((xlen / PL) * i), eps);
-        if (y < y0)
-            y0 = y;
-        if (y > y1)
-            y1 = y;
+void Plotter::addfun(double x0, double x1, double (*Fs)(double)) {
+    bool reb=0;
+    this->funcs.push_back(Funcs());
+    funcs.back().x0=x0;
+    funcs.back().x1=x1;
+    if (minX > x0) {
+        minX = x0;
+        XL = MaxX - minX;
+        reb=1;
     }
-
-    long double ylen = y1 - y0;
-    for (int i = 0; i < PL; i++)
-    {
-
-        curve[i] = sf::Vector2f(i+SX, -20*fun(x0 + ((xlen / PL) * i), eps) +SY+(PH/2));
-        if (curve[i].position.y > SY + PH)
-            curve[i].position.y = SY + PH;
-        else if (curve[i].position.y < SY)
-            curve[i].position.y = SY;
+    if (MaxX < x1) {
+        MaxX = x1;
+        XL = MaxX - minX;
+        reb=1;
     }
-    curves.push_back(curve);
-}
-
-void AnoraksMath::Plotter::addfun(double (*fun)(double), int x0, int x1) {
-    long double xlen = abs(x1 - x0), y0, y1, y;
-    y1 = y0 = fun(x0 + ((xlen / PL) * 1));
-    sf::VertexArray curve(sf::LinesStrip, PL);
-    for (int i = 0; i < PL; i++)
-    {
-        y = fun(x0 + ((xlen / PL) * i));
-        if (y < y0)
-            y0 = y;
-        if (y > y1)
-            y1 = y;
+    double curY;
+    funcs.back().Fs = Fs;
+    funcs.back().typ = Funcs::tp::func;
+    if(funcs.back().cur) {
+        funcs.back().cur->clear();
+        delete (funcs.back().cur);
     }
-    long double ylen = y1 - y0;
-    for (int i = 0; i < PL; i++)
-    {
-        curve[i] = sf::Vector2f(i+SX,-20*(fun(x0 + ((xlen / PL) * i)))+SY+(PH/2));
-        if (curve[i].position.y > SY + PH)
-            curve[i].position.y = SY + PH;
-        else if (curve[i].position.y < SY)
-            curve[i].position.y = SY;
-    }
-    curves.push_back(curve);
-}
-
-void AnoraksMath::Plotter::addfun(long double (*fun)(vector<long double>, vector<long double>, long double),
-                                 vector<long double> fv, vector<long double> xv, long double x0,long double x1)
-{
-    long double xlen = abs(x1 - x0), y0, y1, y;
-    y1 = y0 =  fun(fv,xv,(x0 + ((xlen / PL))));
-    sf::VertexArray curve(sf::LinesStrip,PL);
-    for (int i = 0; i < PL; i++)
-    {
-        y = fun(fv,xv,(x0 + ((xlen / PL) * i)));
-        if (y < y0)
-            y0 = y;
-        if (y > y1)
-            y1 = y;
-    }
-    long double ylen = y1 - y0;
-    for (int i = 0; i < PL; i++)
-    {
-        curve[i] = sf::Vector2f(i+SX,-20*(fun(fv,xv,(x0 + ((xlen / PL) * i)))) +SY+(PH / 2));
-        if (curve[i].position.y > SY + PH)
-            curve[i].position.y = SY + PH;
-        else if (curve[i].position.y < SY)
-            curve[i].position.y = SY;
-    }
-    curves.push_back(curve);
-}
-
-void AnoraksMath::Plotter::clear()
-{
-    curves.clear();
-}
-
-void AnoraksMath::Plotter::setColors(vector<sf::Color> curvecolors, sf::Color bgc)
-{
-    bg->setFillColor(bgc);
-    int c;
-    if (curves.size() > curvecolors.size())
-    {
-        c = curvecolors.size();
-    }
-    else
-    {
-        c = curves.size();
-    }
-
-    for (int i = 0; i < c; i++)
-    {
-        for (int j = 0; j < curves[i].getVertexCount(); j++)
-        {
-            curves[i][j].color = curvecolors[i];
-            
+    int ssize=(x1 - x0) * (this->sizeX/this->XL);
+    funcs.back().sssize=ssize;
+    funcs.back().cur=new VertexArray(PrimitiveType::LinesStrip,ssize);
+    double ii=(x1 - x0) * (this->sizeX/this->XL);
+    for (double i = 0; i < (x1 - x0) * (this->sizeX/this->XL); i++) {
+        curY = Fs(i + x0 - this->minX);
+        if (curY < minY) {
+            minY = curY;
+            reb=1;
+        }
+        if (curY > MaxY) {
+            MaxY = curY;
+            reb=1;
+        }
+        if (curY < minY) {
+            minY = curY;
+            reb=1;
+        }
+        if (curY > MaxY) {
+            MaxY = curY;
+            reb=1;
         }
     }
+    double tr=x0;
+    YL = (MaxY - minY);
+    for(int i=0;i<ssize;i++)
+    {
+        double xx=(i+(x0-minX)*(sizeX/XL));
+        double yy=(sizeY/YL)*(Fs(xx/(sizeX/XL)))+sizeY/2;
+        funcs.back().cur->operator[](i).position.x= xx+SX;
+        funcs.back().cur->operator[](i).position.y= yy+SY;
+        funcs.back().cur->operator[](i).color=Color::White;
+    }
+    if(reb)
+        rebuild();
 }
 
-
-AnoraksMath::Plotter::~Plotter() {
-    curves.clear();
-}
-
-void AnoraksMath::Plotter::draw(sf::RenderTarget& target, sf::RenderStates states) const
+void Plotter::rebuild()
 {
-    target.draw(*bg,states);
+    vector<Funcs>funcsb=funcs;
+    funcs.clear();
+    for(int i=0;i<funcsb.size()-1;i++)
+    {
+        switch (funcsb[i].typ) {
 
-    for (int i = 0; i < curves.size(); i++)
-        target.draw(curves[i]);
+            case Funcs::vectorsxy:
+                addfun(funcsb[i].x,funcsb[i].y);
+                break;
+            case Funcs::func:
+                addfun(funcsb[i].x0,funcsb[i].x1,funcsb[i].Fs);
+                break;
+            case Funcs::funcm:
+                addfun(funcsb[i].x0,funcsb[i].x1,funcsb[i].eps,funcsb[i].Fm);
+                break;
+            case Funcs::lag:
+                addfun(funcsb[i].x0,funcsb[i].x1,funcsb[i].x,funcsb[i].y,funcsb[i].Fl);
+                break;
+            case Funcs::point:
+                addPoint(funcsb[i].x0,funcsb[i].x1);
+                break;
+        }
+    }
+    funcs.push_back(funcsb.back());
 }
+
+
+
+void Plotter::draw(RenderTarget &target, sf::RenderStates states) const
+{
+    target.draw(back);
+    for(int i=0;i<funcs.size();i++)
+    {
+        if(funcs[i].typ!=Funcs::tp::point)
+            target.draw(*funcs[i].cur);
+        else
+            target.draw(funcs[i].ppoint);
+    }
+}
+
+
+
+
+void Plotter::addfun(double x0, double x1, double eps, long double (*Fm)(long double, long double)) {
+    bool reb=0;
+    this->funcs.push_back(Funcs());
+    funcs.back().x0=x0;
+    funcs.back().x1=x1;
+    if (minX > x0) {
+        minX = x0;
+        XL = MaxX - minX;
+        reb=1;
+    }
+    if (MaxX < x1) {
+        MaxX = x1;
+        XL = MaxX - minX;
+        reb=1;
+    }
+    double curY;
+    funcs.back().Fm = Fm;
+    funcs.back().typ = Funcs::tp::funcm;
+    funcs.back().eps=eps;
+    if(funcs.back().cur) {
+        funcs.back().cur->clear();
+        delete (funcs.back().cur);
+    }
+    int ssize=(x1 - x0) * (this->sizeX/this->XL);
+    funcs.back().sssize=ssize;
+    funcs.back().cur=new VertexArray(PrimitiveType::LinesStrip,ssize);
+    double ii=(x1 - x0) * (this->sizeX/this->XL);
+    for (double i = 0; i < ssize; i++) {
+        curY = Fm(i + x0 - this->minX,eps);
+        if (curY < minY) {
+            minY = curY;
+            reb=1;
+        }
+        if (curY > MaxY) {
+            MaxY = curY;
+            reb=1;
+        }
+        if (curY < minY) {
+            minY = curY;
+            reb=1;
+        }
+        if (curY > MaxY) {
+            MaxY = curY;
+            reb=1;
+        }
+    }
+    YL = (MaxY - minY);
+    for(int i=0;i<ssize;i++)
+    {
+        double xx=(i+(x0-minX)*(sizeX/XL));
+        double yy=(sizeY/YL)*(Fm(xx/(sizeX/XL),eps))+sizeY/2;
+        funcs.back().cur->operator[](i).position.x= xx+SX;
+        funcs.back().cur->operator[](i).position.y= yy+SY;
+        funcs.back().cur->operator[](i).color=Color::White;
+    }
+    if(reb)
+        rebuild();
+}
+
+void Plotter::addfun(double x0, double x1, vector<long double> arrX, vector<long double> arrY,
+                     double (*Fl)(vector<long double>, vector<long double>, double))
+{
+    bool reb=0;
+    this->funcs.push_back(Funcs());
+    funcs.back().x0=x0;
+    funcs.back().x1=x1;
+    if (minX > x0) {
+        minX = x0;
+        XL = MaxX - minX;
+        reb=1;
+    }
+    if (MaxX < x1) {
+        MaxX = x1;
+        XL = MaxX - minX;
+        reb=1;
+    }
+    double curY;
+    funcs.back().Fl=Fl;
+    funcs.back().typ = Funcs::tp::lag;
+    funcs.back().x=arrX;
+    funcs.back().y=arrY;
+    if(funcs.back().cur) {
+        funcs.back().cur->clear();
+        delete (funcs.back().cur);
+    }
+    int ssize=(x1 - x0) * (this->sizeX/this->XL);
+    funcs.back().sssize=ssize;
+    funcs.back().cur=new VertexArray(PrimitiveType::LinesStrip,ssize);
+    double ii=(x1 - x0) * (this->sizeX/this->XL);
+    for (double i = 0; i < ssize; i++) {
+        curY = Fl(arrX,arrY,i + x0 - this->minX);
+        if (curY < minY) {
+            minY = curY;
+            reb=1;
+        }
+        if (curY > MaxY) {
+            MaxY = curY;
+            reb=1;
+        }
+        if (curY < minY) {
+            minY = curY;
+            reb=1;
+        }
+        if (curY > MaxY) {
+            MaxY = curY;
+            reb=1;
+        }
+    }
+    YL = (MaxY - minY);
+    for(int i=0;i<ssize;i++)
+    {
+        double xx=(i+(x0-minX)*(sizeX/XL));
+        double yy=(sizeY/YL)*(Fl(arrX,arrY,xx/(sizeX/XL)))+sizeY/2;
+        funcs.back().cur->operator[](i).position.x= xx+SX;
+        funcs.back().cur->operator[](i).position.y= yy+SY;
+        funcs.back().cur->operator[](i).color=Color::White;
+    }
+    if(reb)
+        rebuild();
+}
+
+void Plotter::addfun(vector<long double> arrX, vector<long double> arrY) {
+    bool reb=0;
+    this->funcs.push_back(Funcs());
+    for(auto i:arrX) {
+        if (minX > i) {
+            minX = i;
+            XL = MaxX - minX;
+            reb = 1;
+        }
+        if (MaxX < i) {
+            MaxX = i;
+            XL = MaxX - minX;
+            reb = 1;
+        }
+    }
+
+    funcs.back().typ = Funcs::tp::vectorsxy;
+    funcs.back().x=arrX;
+    funcs.back().y=arrY;
+    if(funcs.back().cur) {
+        funcs.back().cur->clear();
+        delete (funcs.back().cur);
+    }
+    funcs.back().cur=new VertexArray(PrimitiveType::LinesStrip,arrX.size());
+    for(auto i:arrY) {
+        if (minY > i) {
+            minY = i;
+            reb = 1;
+        }
+        if (MaxY < i) {
+            MaxY = i;
+            reb = 1;
+        }
+    }
+    YL = (MaxY - minY);
+    for(int i=0;i<arrX.size();i++)
+    {
+        double xx=arrX[i]*sizeX/XL;
+        double yy=arrY[i]*sizeY/YL+sizeY/2;
+        funcs.back().cur->operator[](i).position.x= xx+SX;
+        funcs.back().cur->operator[](i).position.y= yy+SY;
+        funcs.back().cur->operator[](i).color=Color::White;
+    }
+    if(reb)
+        rebuild();
+}
+
+void Plotter::setColors(vector<Color> cc, Color bg) {
+    int gg;
+    if(cc.size()<=funcs.size())
+        gg=cc.size();
+    else
+        gg=funcs.size();
+    for(int i=0;i<gg;i++)
+    {
+        for(int j=0;j<funcs[i].sssize;j++)
+        {
+            funcs[i].cur->operator[](j).color=cc[i];
+        }
+    }
+
+    back.setFillColor(bg);
+}
+
+void Plotter::addPoint(double x, double y) {
+    this->funcs.push_back(Funcs());
+    funcs.back().x0=x;
+    funcs.back().x1=y;
+    funcs.back().typ=Funcs::tp::point;
+    funcs.back().ppoint.setRadius(5);
+    funcs.back().ppoint.setPosition(x*sizeX/XL,(y*sizeY/YL)+(sizeY/2));
+    funcs.back().ppoint.setFillColor(sf::Color::Red);
+}
+
+
+

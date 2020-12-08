@@ -1,81 +1,51 @@
-#include"MathFuncs.h"
-#include"Plotter.h"
-#include <cmath>
-#include <iostream>
-
-using namespace AnoraksMath;
-using namespace std;
-
-
-void ui()
-{
-    char c;
-    while (c!='p') {
-        double eps, x;
-        cout << "enter eps" << endl;
-        cin>>eps;
-        cout<<"enter x"<<endl;
-        cin>>x;
-        cout<<"s - sin    c - cos    e - exp    n - ln    g - lg    t - tan"<<endl;
-        cin>>c;
-        switch (c) {
-            case 's':
-                cout<<"c++    "<<sin(x)<<"    my    "<<MathFuncs::sin(x,eps);
-                break;
-            case 'c':
-                cout<<"c++    "<<cos(x)<<"    my    "<<MathFuncs::cos(x,eps);
-                break;
-            case 'n':
-                cout<<"c++    "<<log(x)<<"    my    "<<MathFuncs::ln(x,eps);
-                break;
-            case 'g':
-                cout<<"c++    "<<log10(x)<<"    my    "<<MathFuncs::lg(x,eps);
-                break;
-            case 'e':
-                cout<<"c++    "<<exp(x)<<"    my    "<<MathFuncs::exp(x,eps);
-                break;
-            case 't':
-                cout<<"c++    "<<tan(x)<<"    my    "<<MathFuncs::sin(x,eps)/MathFuncs::cos(x,eps);
-                break;
-
-        }
-        cout<<endl;
-    }
-
-
-}
-
-int main()
-{/*
-    vector<sf::Color>cl;
-    cl.push_back(Color::Red);
-    cl.push_back(Color::Blue);
-    cl.push_back(Color::Green);
-    sf::ContextSettings g;  g.antialiasingLevel=8;
-    sf::RenderWindow window(sf::VideoMode(1600, 900), "SFML works!",sf::Style::Default,g);
-    Plotter pt2(1600, 900, 0, 0);
-    vector<long double>x,yn,yl;
-    for(double i=0;i<1000;i++)
-    {
-        x.push_back(i);
-        yl.push_back(sin(i)+1);
-        yn.push_back(sin(i)+2);
-    }
-    pt2.addfun(&MathFuncs::lagrange,yl,x,5,70);
-    pt2.addfun(sin, 5,70);
-    pt2.addfun(MathFuncs::newtone,x,yn,5,70);
-    pt2.setColors(cl,Color::White);
-    while (window.isOpen())
-    {
-        sf::Event event;
-        while (window.pollEvent(event))
+#include "ui.h"
+#include <unistd.h>
+using namespace  AnoraksMath;
+vector<vector<long double>>buildMHK(int points,vector<double>rres,double x0,double x1){
+        vector<vector<long double>>res;
+        res.push_back(vector<long double>());
+        res.push_back(vector<long double>());
+        for(double i=x0;i<x1;i+=(x1-x0)/points)
         {
-            if (event.type == sf::Event::Closed)
-                window.close();
+            double xx=0;
+            res[0].push_back(i);
+            for(int j=0;j<rres.size();j++)
+                xx+=rres[j]*pow(i,j);
+            res[1].push_back(-xx);
+
         }
-        window.clear(Color::White);
-        window.draw(pt2);
-        window.display();
-    }*/
-ui();
+    return res;
+
+};
+int main()
+{
+    sf::RenderWindow window(sf::VideoMode(1280, 720), "My window");
+    Plotter p(0,0,1280,720);
+    vector<double>x;
+    vector<double>y;
+    y.push_back(0.86603);
+    y.push_back(1);
+    y.push_back(0.86603);
+    y.push_back(0.5);
+    y.push_back(0);
+    y.push_back(-0.5);
+    x.push_back(-1);
+    x.push_back(0);
+    x.push_back(1);
+    x.push_back(2);
+    x.push_back(3);
+    x.push_back(4);
+    vector<double>res=MathFuncs::MNK(x,y,3);
+    vector<vector<long double>>buil=buildMHK(400,res,-10,10);
+    p.addfun(buil[0],buil[1]);
+    for(int i=0;i<x.size();i++)
+    {
+        p.addPoint(x[i],-y[i]);
+    }
+
+    for(int i=0;i<res.size();i++)
+        cout<<res[i]<<"  "<<endl;
+    window.draw(p);
+    window.display();
+    sleep(1000);
 }

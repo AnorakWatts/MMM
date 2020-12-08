@@ -5,7 +5,7 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -std=c++0x")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++0x -pthread -lX11 -L /lib64")
 
-add_executable(untitled Source.cpp Plotter.cpp Plotter.h MathFuncs.h MathFuncs.cpp)
+add_executable(untitled Source.cpp MathFuncs.h MathFuncs.cpp ui.h Plotter.cpp Plotter.h)
 
 find_package(SFML 2.5 COMPONENTS graphics audio REQUIRED)
 
